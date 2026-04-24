@@ -1,0 +1,62 @@
+feature_engineering:
+  rename_columns:
+    season: season
+    hr: hour
+    weekday: week_day
+    weathersit: weather
+    temp: temperature
+    hum: humidity
+    windspeed: wind_speed
+    cnt: bike_count
+  lag_params:
+    bike_count: [1,2,22,23]
+    hour: [1,2,3]
+    temperature: [1,2,3]
+    humidity: [1,2,3]
+
+training:
+  target_params:
+    shift_period: 1
+    target_column: bike_count
+    new_target_name: target
+  train_fraction: 0.8
+  model_type: catboost
+  model_params:
+    catboost:
+      learning_rate: 0.2
+      depth: 6
+      l2_leaf_reg: 1
+      iterations: 50
+      loss_function: RMSE
+      verbose: 0
+      random_seed: 42
+      allow_writing_files: false
+    random_forest:
+      n_estimators: 100
+      max_depth: 6
+      min_samples_split: 2
+      min_samples_leaf: 1
+      max_features: 'auto'
+      random_seed: 42
+      verbose: 0
+      allow_writing_files: false
+
+model_storage:
+  path: data/06_models
+  name: forecast_model
+
+ui:
+  actual_data_path: data/01_raw/bike_data_inference.parquet
+  predictions_path: data/07_model_outputs/predictions.parquet
+  update_interval_ms: 2000
+  default_lookback_hours: 24
+
+pipeline_runner:
+  batch_size: 30
+  model_path: data/06_models/latest_model
+  predictions_path: data/07_model_output/predictions.parquet
+  first_timestamp: '2012-06-01 00:00:00'
+  last_timestamp: '2012-08-11 15:00:00'
+  time_increment: 1h
+  num_steps_inference: 2000
+  inference_interval_seconds: 2
