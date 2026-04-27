@@ -1,0 +1,9 @@
+{
+  "build": {
+    "builder": "NIXPACKS"
+  },
+  "deploy": {
+    "startCommand": "python entrypoints/app_ui.py",
+    "restartPolicyType": "ON_FAILURE"
+  }
+}
